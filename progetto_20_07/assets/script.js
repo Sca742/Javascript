@@ -7,16 +7,9 @@ $.ajax({
     type:"GET",
     dataType:'json',
     success: function(dati){
-        // console.log(dati);
         
         utenti = dati.data;
 
-
-        // for (let i = 0; i < utenti.length; i++) {
-        //     console.log(i);
-        //     console.log(utenti[i]);
-        // }
-        
         stampaUtenti();
         
     },
@@ -62,8 +55,6 @@ function stampaUtenti() {
 
             '</div></div>');
 
-
-
     }
 }
 
@@ -97,35 +88,12 @@ function modifica(){
     delete utenti[getIndexByEmail($(this).parent().find('p').html())]
     utenti.sort();
     utenti.pop();
-    // $(this).parent().parent().parent().parent().parent().remove();
-    
     
     $('#name').val($(this).parent().children(0).html().split('-')[0]);
-    // $('#name').val($(this).parent().find('p').html());
     $('#surname').val($(this).parent().children(0).html().split('-')[1]);
     $('#email').val($(this).parent().find('p').html());
-    // console.log($(this).parent().find('p').html());
-    
-    
-    
-    
-    
-    
-    
-    
-    // $(document).on("click", "#btn", $.ajax({
-        //                                     url: 'https://reqres.in/api/users',
-        //                                     type: 'POST',
-        //                                     dataType: 'json',
-        //                                     data: {
-            //                                         nome: $('#name').val(),
-            //                                         cognome: $('#surname').val(),
-            //                                         email: $('#email').val()
-            
-            //                                     }
-            //                                 }));                              
-            
-        }
+                            
+    }
         
         
         
