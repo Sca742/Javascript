@@ -8,11 +8,17 @@ $.ajax({
     dataType:'json',
     success: function(dati){
         // console.log(dati);
-
+        
         utenti = dati.data;
 
-        stampaUtenti();
 
+        // for (let i = 0; i < utenti.length; i++) {
+        //     console.log(i);
+        //     console.log(utenti[i]);
+        // }
+        
+        stampaUtenti();
+        
     },
     error:function(textStatus){
         if(textStatus.status == 404){
@@ -22,22 +28,29 @@ $.ajax({
             console.log('qualcosa è andato storto');
         }
     },
-
+    
 })
 
+
+
+
+
 $(document).on('click','#btnDel',elimina);
+
 function stampaUtenti() {
     $("#listaContatti").empty();
     for (let i = 0; i < utenti.length; i++) {
         // $('#listaContatti').children().remove();
-        $('#listaContatti').append('<div class="accordion-item">' +
+        $('#listaContatti').append(
+            
+            '<div class="accordion-item">' +
             '<h2 class="accordion-header" id="headingTwo">' +
             '<button id="nomeUtente" class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse' + utenti[i].first_name + '" aria-expanded="false" aria-controls="collapseTwo">' + utenti[i].first_name + ' ' + utenti[i].last_name + '</button> </h2>'
             + '<div id="collapse' + utenti[i].first_name + '" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">' +
             '<div class="accordion-body" id="infoCard">' +
 
             // card
-            '<div class="card" style="width: 18rem;">' +
+            '<div class="card" style="width: 18rem;" id="card'+i+'">' +
             "<img class='card-img-top' src='"+ utenti[i].avatar +"' alt=''>" +
             '<div class="card-body">' +
             '<h5 class="card-title">' + utenti[i].first_name + '-' + utenti[i].last_name + '</h5>' +
@@ -55,38 +68,96 @@ function stampaUtenti() {
 }
 
 function elimina(){
-    $(this).parent().parent().parent().parent().parent().remove();
+    console.log("sono in elimina")
+    $(this).parent()
+   .parent()
+   .parent()
+   .parent()
+    .parent().remove();
 }
+
 
 $(document).on('click','#btnMod',modifica);
 
-
 var nuovoUtente;
+function getIndexByEmail(emaildellaltro) {
+    for (let i = 0; i < utenti.length; i++) {
+        if (utenti[i].email==emaildellaltro) {
+            return i;
+        }
+    }
+    return -1;
+}
 
 function modifica(){
+    // console.log($(this).parent().parent().attr("id"));
+    $("#"+$(this).parent().parent().attr("id")).find("#btnDel").click();
+    
+    console.log(getIndexByEmail($(this).parent().find('p').html()))
+    delete utenti[getIndexByEmail($(this).parent().find('p').html())]
+    utenti.sort();
+    utenti.pop();
+    // $(this).parent().parent().parent().parent().parent().remove();
+    
+    
     $('#name').val($(this).parent().children(0).html().split('-')[0]);
     // $('#name').val($(this).parent().find('p').html());
     $('#surname').val($(this).parent().children(0).html().split('-')[1]);
     $('#email').val($(this).parent().find('p').html());
     // console.log($(this).parent().find('p').html());
-    var random=Math.ceil(10*(Math.random()));
-    $('#btn').on('click', function () {
-        $.ajax({
-            url: "https://reqres.in/api/users",
-            type: "POST",
-            data: {
-                first_name: $('#name').val(),
-                last_name: $('#surname').val(),
-                email: $('#email').val(),
-                avatar: 'https://reqres.in/img/faces/'+random+'-image.jpg">'
-            },
-            success: function(response){
-                nuovoUtente=response;
-                utenti.push(nuovoUtente);
+    
+    
+    
+    
+    
+    
+    
+    
+    // $(document).on("click", "#btn", $.ajax({
+        //                                     url: 'https://reqres.in/api/users',
+        //                                     type: 'POST',
+        //                                     dataType: 'json',
+        //                                     data: {
+            //                                         nome: $('#name').val(),
+            //                                         cognome: $('#surname').val(),
+            //                                         email: $('#email').val()
+            
+            //                                     }
+            //                                 }));                              
+            
+        }
+        
+        
+        
+        
+        
+        $('#btn').on('click', function () {
+            if (($('#name').val()=="")||($('#email').val()=="")||($('#surname').val()=="")) {
                 
-                stampaUtenti();
+            } else {
+                
+                $.ajax({
+                    url: "https://reqres.in/api/users",
+                    type: "POST",
+                    data: {
+                        first_name: $('#name').val(),
+                        last_name: $('#surname').val(),
+                        email: $('#email').val(),
+                        id: (Number)(1+utenti.length),
+                        avatar: 'https://reqres.in/img/faces/'+(Number)(Math.ceil(10*(Math.random())))+'-image.jpg'
+                    },
+                    success: function(response){
+                        $('#name').val("");
+                        $('#surname').val("");
+                        $('#email').val("");
+                        nuovoUtente=response;
+                        console.log(utenti);
+                        console.log(nuovoUtente);
+                        utenti.push(nuovoUtente);
+                        
+                        stampaUtenti();
+                    }
+                })
             }
-        })
         });
-                    
-}
+ 
